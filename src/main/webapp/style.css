@@ -1,0 +1,90 @@
+@charset "ISO-8859-1";
+
+*{
+	font-family:Inter;
+	margin: 0; padding: 0;
+	
+}
+.WelcomeSign{
+	text-align:center;
+}
+
+body{
+	background-color:white;
+}
+table,td{
+	border: 1px solid;
+	margin: auto;
+  	width: 50%;
+}
+#NotepaperDiv{
+	margin: auto;
+  	width: 50%;
+  	border: 3px solid black;
+	background-image: url("image/notepaper.jpg");
+  	background-repeat: no-repeat;
+  	background-size:cover;
+  	display:block;
+}
+#RegisterChoice{
+	margin: auto;
+  	width: 30%;
+  	padding: 20px;
+  	text-align:center;
+}
+.RegisterButtons{
+	padding:50px 50px;
+	color: beige;
+	background-color:lightBlue;
+}
+#stickyBar{
+	width: 100vw;
+    position: relative;
+    margin-left: -50vw;
+    top:0px;
+    left: 50%;
+	background-image: url("image/wood.jpg");
+}
+#navbar{
+  	list-style-type: none;
+  	margin: 0;
+  	padding: 0;
+  	overflow: hidden;
+}
+
+#navbar>li{
+    display: block;
+    font-size: 40px;
+    float: left;
+}
+
+.active,#navbar>li:hover{
+	background-color: rgba(255,228,196,0.6);
+}
+
+li a{
+	display: block;
+  	color: white;
+  	text-align: center;
+  	padding: 14px 16px;
+  	text-decoration: none;
+}
+.caution{
+	color:white;
+}
+
+#logout{
+	background-color:red;
+}
+
+#logout:hover{
+	background-color: #cc0000;
+}
+
+#deleteAccount{
+	background-color:#660000;
+}
+
+#deleteAccount:hover{
+	background-color:#330000;
+}
