@@ -18,12 +18,11 @@ public class SeekerChangePassword extends HttpServlet {
 		Model m = new Model();
 		HttpSession session = req.getSession();
 		
-		session.removeAttribute("mismatchPassword");
 		m.setPassword(req.getParameter("password"));
-		m.setEmail(session.getAttribute("email").toString());
+		m.setId(session.getAttribute("id").toString());
 		m.updatePasswordForSeeker();
 		
-		resp.sendRedirect("SeekerHomePage.jsp");
+		resp.sendRedirect("GetSeekerHomePage");
 	}
 
 }

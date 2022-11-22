@@ -5,12 +5,12 @@
 	margin: 0; padding: 0;
 	
 }
-.WelcomeSign{
-	text-align:center;
-}
 
 body{
-	background-color:white;
+	background-color:#F3F2EF;
+	display:flex; 
+  	flex-direction:column; 
+  	height:100vh;
 }
 table,td{
 	border: 1px solid;
@@ -20,11 +20,22 @@ table,td{
 #NotepaperDiv{
 	margin: auto;
   	width: 50%;
-  	border: 3px solid black;
-	background-image: url("image/notepaper.jpg");
+  	height:100%;
+  	border: 2px solid black;
+  	border-radius:5px;
+	background-color:white;
   	background-repeat: no-repeat;
   	background-size:cover;
   	display:block;
+}
+#RegisterAsSeeker{
+	background-size:cover;
+	padding:0;
+	width:40vw;
+	margin-left: -50vw;
+	height:40vw;
+	top:0px;
+    left: 50%;
 }
 #RegisterChoice{
 	margin: auto;
@@ -36,38 +47,6 @@ table,td{
 	padding:50px 50px;
 	color: beige;
 	background-color:lightBlue;
-}
-#stickyBar{
-	width: 100vw;
-    position: relative;
-    margin-left: -50vw;
-    top:0px;
-    left: 50%;
-	background-image: url("image/wood.jpg");
-}
-#navbar{
-  	list-style-type: none;
-  	margin: 0;
-  	padding: 0;
-  	overflow: hidden;
-}
-
-#navbar>li{
-    display: block;
-    font-size: 40px;
-    float: left;
-}
-
-.active,#navbar>li:hover{
-	background-color: rgba(255,228,196,0.6);
-}
-
-li a{
-	display: block;
-  	color: white;
-  	text-align: center;
-  	padding: 14px 16px;
-  	text-decoration: none;
 }
 .caution{
 	color:white;

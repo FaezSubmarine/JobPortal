@@ -4,47 +4,73 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Welcome</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter&family=Secular+One&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="CSS/LandingPage.css">
+<link rel="stylesheet" href="CSS/Footer.css">
+
+<script src="JS/IndexRegisterButtons.js"></script>
 </head>
 <body>
+	<div id="stickyBar">
+		<ul id="navbar">
+			<li id="WelcomeSign">
+				<h2 class="WelcomeSign">Welcome to the</h2>
+				<h1 class="WelcomeSign">Job Portal</h1>
+			</li>
+		</ul>
+	</div>
+	<main>
+	<h2 id="AreYou">Choose your role</h2>
+	<div id="ChoiceContainer">
+		<div id="RegisterAsSeeker" class="LandingPagebuttons"
+			onclick="location.href='RegisterAsSeeker.jsp'">
+			<img id="SeekerImg0" class="slide"
+				src="image/RegisterSeeker/cashier.jpg"> <img id="SeekerImg1"
+				class="slide" src="image/RegisterSeeker/director.jpg"> <img
+				id="SeekerImg2" class="slide" src="image/RegisterSeeker/lawyer.jpg">
+			<img id="SeekerImg3" class="slide"
+				src="image/RegisterSeeker/salesman.jpg">
+			<h1 class="RegisterText">Job Seeker</h1>
+		</div>
+		<div id="RegisterAsEmployer" class="LandingPagebuttons"
+			onclick="location.href='RegisterAsEmployer.jsp'">
+			<img id="EmployerImg0" class="slide"
+				src="image/RegisterEmployer/CallCenter.jpg"> <img
+				id="EmployerImg1" class="slide"
+				src="image/RegisterEmployer/Captain.jpg"> <img
+				id="EmployerImg2" class="slide" src="image/RegisterEmployer/CEO.png">
+			<img id="EmployerImg3" class="slide"
+				src="image/RegisterEmployer/Manager.jpg">
+			<h1 class="RegisterText">Employer</h1>
+		</div>
+	</div>
+	</main>
+	<footer>
+		<div>
+			<h4>Seeker</h4>
+			<a href="RegisterAsSeeker.jsp">Seeker Register</a> <a
+				href="SeekerLogin.jsp">Seeker Log In</a>
+		</div>
+		<div>
+			<h4>Employer</h4>
+			<a href="RegisterAsEmployer.jsp">Employer Register</a> <a
+				href="EmployerLogin.jsp">Employer Log In</a>
 
-<div id="NotepaperDiv">
-<h2 class="WelcomeSign">Welcome to the</h1>
-<h1 class="WelcomeSign">Job Board</h1>
-<div id="RegisterChoice">
-Register as an<br>
-<button id="RegisterAsSeeker" class="RegisterButtons" onclick="location.href='RegisterAsEmployer.jsp'" type="button"> Employer</button>
-<button class="RegisterButtons" onclick="location.href='RegisterAsSeeker.jsp'" type="button"> Job Seeker</button>
-<br>
-Or log in as a<br>
-<form action="/JobPortal/Login">
-	<label for="Employer">Employer</label>
-	<input type="radio" id="Employer" name="UserType" value="Employer">
-
-	<label for="Seeker">Seeker</label>
-	<input type="radio" id="Seeker" name="UserType" value="Seeker" checked="checked"><br>
-
-	<label for="email">email</label><br>
-	<input name="email" type="email" required>
-	<%if(session.getAttribute("NoEmail")!=null
-    && session.getAttribute("NoEmail").toString().equals("true")){%>
-    <span>There is no account using this email</span> <%}%><br>
-
-    <label for="password">password</label><br>
-    <input name="password" type="password" required><br>
-    	<%if(session.getAttribute("passwordMismatch")!=null
-    && session.getAttribute("passwordMismatch").toString().equals("true")){%>
-    <span>Wrong password</span> <%}%><br>
-    <input type="submit" value="Login">
-    
-</form>
-</div>
-</div>
-
+		</div>
+		<div>
+			<h4>Legal</h4>
+			<a>Terms and Condition</a>
+		</div>
+		<div>
+			<h4>About Us</h4>
+			<a>About the developer</a>
+		</div>
+	</footer>
 </body>
+
 </html>

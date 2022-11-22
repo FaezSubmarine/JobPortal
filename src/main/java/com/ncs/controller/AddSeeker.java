@@ -18,7 +18,9 @@ public class AddSeeker extends HttpServlet {
 		String firstName = req.getParameter("firstName");
 		String lastName = req.getParameter("lastName");
 		String password = req.getParameter("password");
+		
 		String email = req.getParameter("email");
+		
 		String phoneNumber = req.getParameter("phoneNumber");
 		String address = req.getParameter("address");
 		String seekStatus = req.getParameter("SeekStatus");
@@ -38,18 +40,20 @@ public class AddSeeker extends HttpServlet {
 		if(result == 1) {
 			HttpSession session = req.getSession(true);
 			session.setAttribute("id", m.getId());
-			session.setAttribute("firstName", firstName);
-			session.setAttribute("lastName", lastName);
-			session.setAttribute("password", password);
-			session.setAttribute("email", email);
-			session.setAttribute("phoneNumber", phoneNumber);
-			session.setAttribute("address", address);
-			session.setAttribute("SeekStatus", seekStatus);
+			/*
+			 * session.setAttribute("firstName", firstName);
+			 * session.setAttribute("lastName", lastName); session.setAttribute("password",
+			 * password); session.setAttribute("email", email);
+			 * session.setAttribute("phoneNumber", phoneNumber);
+			 * session.setAttribute("address", address); session.setAttribute("SeekStatus",
+			 * seekStatus);
+			 */
 			
-			resp.sendRedirect("/JobPortal/SeekerHomePage.jsp");
+			resp.sendRedirect("GetSeekerHomePage");
+			//resp.sendRedirect("GetSeekerHomePage?id="+m.getId());
 		}
 		else {
-			resp.sendRedirect("/JobPortal/index.html");
+			resp.sendRedirect("/JobPortal/RegisterAsSeeker.jsp");
 		}
 	}
 	

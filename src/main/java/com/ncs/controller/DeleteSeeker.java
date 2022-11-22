@@ -19,7 +19,7 @@ public class DeleteSeeker extends HttpServlet {
 		
 		HttpSession session = req.getSession();
 		
-		m.setEmail(session.getAttribute("email").toString());
+		m.setId(session.getAttribute("id").toString());
 		m.deleteSeeker();
 		req.getSession().invalidate();
 		resp.sendRedirect("index.jsp");

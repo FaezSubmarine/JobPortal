@@ -16,15 +16,20 @@ import com.ncs.model.Model;
  */
 public class Applying extends HttpServlet {
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String getQuery = request.getQueryString();
+		int id = Integer.valueOf(getQuery.substring(3));
+		
 		HttpSession session = request.getSession();
 		Model m = new Model();
-		m.setJobID(Integer.parseInt(request.getParameter("JobID")));
+		m.setJobID(id);
 		HashMap<String,String> result = m.getJobListingFromID();
-		m.setApplicantEmail(session.getAttribute("email").toString());
-		m.setPosterEmail(result.get("EmployerEmail"));
+		m.setId(Integer.valueOf(request.getSession().getAttribute("id").toString()));
+
+		System.out.println("did it come here"+ Integer.valueOf(result.get("EmployerID")));
+
 		m.setRole(result.get("role"));
 		m.setDatePosted(result.get("datePosted"));
-		m.addJobsApplied();
+		m.addJobsApplied(Integer.valueOf(result.get("EmployerID")));
 		
 		response.sendRedirect("SeekerJobList");
 	}

@@ -24,6 +24,8 @@ public class Model {
 	private String company;
 	private String seekStatus;
 	
+	private int hibernate;
+	
 	private String role;
 	private String description;
 	private String salary;
@@ -98,7 +100,6 @@ public class Model {
 			s = "select * from seeker where email=?";
 			pstmt = con.prepareStatement(s);
 			pstmt.setString(1, email);
-			
 			res = pstmt.executeQuery();
 			res.next();
 			id = res.getInt("id");
@@ -112,14 +113,13 @@ public class Model {
 	
 	public int addJobsPosted() {
 		try {
-			String s = "Insert into JobsPosted (company,EmployerEmail,role,description,salary,relevantExp,datePosted)VALUES(?,?,?,?,?,?,curdate())";
+			String s = "Insert into JobsPosted (employerID,role,description,salary,relevantExp,datePosted)VALUES(?,?,?,?,?,curdate())";
 			pstmt = con.prepareStatement(s);
-			pstmt.setString(1,company);
-			pstmt.setString(2,email);
-			pstmt.setString(3,role);
-			pstmt.setString(4, description);
-			pstmt.setString(5,salary);
-			pstmt.setString(6,relevantExp);
+			pstmt.setInt(1,id);
+			pstmt.setString(2,role);
+			pstmt.setString(3, description);
+			pstmt.setString(4,salary);
+			pstmt.setString(5,relevantExp);
 			
 			return pstmt.executeUpdate();
 		} catch (Exception e) {
@@ -127,14 +127,14 @@ public class Model {
 		}
 		return 0;
 	}
-	public int addJobsApplied() {
+	public int addJobsApplied(int empID) {
 		try {
-			String s = "Insert into jobsapplied (jobID,applicantEmail,posterEmail,role,datePosted,dateApplied,status)VALUES(?,?,?,?,?,curdate(),?)";
+			String s = "Insert into jobsapplied (jobID,SeekerID,EmployerID,role,datePosted,dateApplied,status)VALUES(?,?,?,?,?,curdate(),?)";
 			pstmt = con.prepareStatement(s);
 			
 			pstmt.setInt(1, jobID);
-			pstmt.setString(2, applicantEmail);
-			pstmt.setString(3, posterEmail);
+			pstmt.setInt(2, id);
+			pstmt.setInt(3, empID);
 			pstmt.setString(4, role);
 			pstmt.setDate(5,datePosted);
 			pstmt.setString(6, "pending");
@@ -144,7 +144,18 @@ public class Model {
 		}
 		return 0;
 	}
-	
+	public int deleteJobsApplied() {
+		try {
+			String s = "Delete from jobsapplied where jobID=? and SeekerID=?";
+			pstmt = con.prepareStatement(s);
+			pstmt.setInt(1, jobID);
+			pstmt.setInt(2, id);
+			return pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
 	public int updateJobStatus() {
 		try {
 			
@@ -160,6 +171,7 @@ public class Model {
 		}
 		return 0;
 	}
+	
 	public int deleteJobPosting() {
 		try {
 			String s = "DELETE FROM jobsposted where id=?";
@@ -176,35 +188,61 @@ public class Model {
 		}
 		return 0;
 	}
+	public boolean hibernateEmployer(boolean sleep) {
+		try {
+			String[] tableNames ={"employer","jobsposted","jobsapplied"};
+			for(String tableName:tableNames) {
+				String idString = (tableName.equals("employer"))?"id":"EmployerID";
+				String s = "UPDATE "+tableName+" SET hibernate=? where "+idString+"=?";
+				pstmt = con.prepareStatement(s);
+				pstmt.setInt(1, sleep?1:0);
+				pstmt.setInt(2, id);
+				
+				if(pstmt.executeUpdate()!=1) {
+					return false;
+				}
+			}
+			return true;
+
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
+		return false;
+	}
+	public boolean hibernateSeeker(boolean sleep) {
+		try {
+			String s = "UPDATE seeker SET hibernate=? where id=?";
+			pstmt = con.prepareStatement(s);
+			pstmt.setInt(1, sleep?1:0);
+			pstmt.setInt(2, id);
+			
+			if(pstmt.executeUpdate()!=1) {
+				return false;
+			}
+			s = "UPDATE jobsapplied SET seekerhib=? where SeekerID=?";
+			pstmt = con.prepareStatement(s);
+			pstmt.setInt(1, sleep?1:0);
+			pstmt.setInt(2, id);
+			if(pstmt.executeUpdate()!=1) {
+				return false;
+			}
+			return true;
+
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
+		return false;
+	}
 	public int deleteSeeker() {
 		try {
-			String s = "DELETE FROM jobsapplied where applicantEmail=?";
+			String s = "DELETE FROM jobsapplied where SeekerID=?";
 			pstmt = con.prepareStatement(s);
-			pstmt.setString(1, email);
+			pstmt.setInt(1, id);
 			pstmt.executeUpdate();
 			
-			s = "DELETE FROM seeker where email=?";
+			s = "DELETE FROM seeker where id=?";
 			pstmt = con.prepareStatement(s);
-			pstmt.setString(1, email);
-			return pstmt.executeUpdate();
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return 0;
-	}
-	public int updateSeekerEmail() {
-		try {
-			String s = "UPDATE jobsapplied SET applicantEmail=? where applicantEmail=?";
-			pstmt = con.prepareStatement(s);
-			pstmt.setString(1, email);
-			pstmt.setString(2,oldEmail);
-			pstmt.executeUpdate();
-			
-			s = "UPDATE seeker SET email=? where email=?";
-			pstmt = con.prepareStatement(s);
-			pstmt.setString(1, email);
-			pstmt.setString(2,oldEmail);
+			pstmt.setInt(1, id);
 			return pstmt.executeUpdate();
 			
 		} catch (Exception e) {
@@ -214,19 +252,19 @@ public class Model {
 	}
 	public int deleteEmployer() {
 		try {
-			String s = "DELETE FROM jobsapplied where posterEmail=?";
+			String s = "DELETE FROM jobsapplied where EmployerID=?";
 			pstmt = con.prepareStatement(s);
-			pstmt.setString(1, email);
+			pstmt.setInt(1, id);
 			pstmt.executeUpdate();
 			
-			s = "DELETE FROM jobsposted where EmployerEmail=?";
+			s = "DELETE FROM jobsposted where EmployerID=?";
 			pstmt = con.prepareStatement(s);
-			pstmt.setString(1, email);
+			pstmt.setInt(1, id);
 			pstmt.executeUpdate();
 			
-			s = "DELETE FROM employer where email=?";
+			s = "DELETE FROM employer where id=?";
 			pstmt = con.prepareStatement(s);
-			pstmt.setString(1, email);
+			pstmt.setInt(1, id);
 			return pstmt.executeUpdate();
 			
 		} catch (Exception e) {
@@ -238,21 +276,7 @@ public class Model {
 		try {
 			System.out.println("Model email "+email);
 			
-			String s = "UPDATE jobsapplied SET posterEmail=? where posterEmail=?";
-			pstmt = con.prepareStatement(s);
-			pstmt.setString(1, email);
-			pstmt.setString(2, oldEmail);
-
-			pstmt.executeUpdate();
-			
-			s = "UPDATE jobsposted SET EmployerEmail=? where EmployerEmail=?";
-			pstmt = con.prepareStatement(s);
-			pstmt.setString(1, email);
-			pstmt.setString(2, oldEmail);
-
-			pstmt.executeUpdate();
-			
-			s = "UPDATE employer SET email=? where email=?";
+			String s = "UPDATE employer SET email=? where email=?";
 			pstmt = con.prepareStatement(s);
 			pstmt.setString(1, email);
 			pstmt.setString(2, oldEmail);
@@ -274,15 +298,18 @@ public class Model {
 			pstmt.setInt(1, jobID);
 			ResultSet res = pstmt.executeQuery();
 			res.next();
+			int empId = res.getInt("employerID");
 			
-			result.put("company", res.getString("company"));
-			result.put("EmployerEmail", res.getString("EmployerEmail"));
+			ResultSet empRes = getEmployerResultSet(empId);
+
+			result.put("EmployerID",String.valueOf(empId));
+			result.put("company", empRes.getString("company"));
+			result.put("EmployerEmail",empRes.getString("email"));
 			result.put("role", res.getString("role"));
 			result.put("description", res.getString("description"));
 			result.put("salary", res.getString("salary"));
 			result.put("relevantExp", res.getString("relevantExp"));
 			result.put("datePosted", res.getDate("datePosted").toString());
-			result.put("status", res.getString("status"));
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -298,15 +325,13 @@ public class Model {
 	}
 	public int loginEmployer() {
 		try {
-			String s = "Select * from Employer where email=?";
+			String s = "select * from Employer where email=? AND password=?";
 			pstmt = con.prepareStatement(s);
 			pstmt.setString(1, email);
-			if(!pstmt.executeQuery().next()) {
-				return -1;
-			}
-			s = "select * from Employer where email=? AND password=?";
-			pstmt = con.prepareStatement(s);
-			pstmt.setString(1, email);
+			
+			System.out.println("regular password "+passwordScrambler(password));
+			System.out.println("asdf password "+passwordScrambler("asdf"));
+			
 			pstmt.setString(2, passwordScrambler(password));
 			
 			res = pstmt.executeQuery();
@@ -339,6 +364,7 @@ public class Model {
 			s = "select * from seeker where email=? AND password=?";
 			pstmt = con.prepareStatement(s);
 			pstmt.setString(1, email);
+			
 			pstmt.setString(2, passwordScrambler(password));
 			
 			res = pstmt.executeQuery();
@@ -348,7 +374,6 @@ public class Model {
 			id = res.getInt("id");
 			firstName = res.getString("firstName");
 			lastName = res.getString("lastName");
-			password = res.getString("password");
 			email = res.getString("email");
 			phoneNumber = res.getString("phoneNumber");
 			address = res.getString("address");
@@ -360,13 +385,154 @@ public class Model {
 		return 0;
 	}
 	
+	public int getSeekerDetails(){
+		try {
+			String s = "Select * from seeker where id=?";
+			pstmt = con.prepareStatement(s);
+			pstmt.setInt(1, id);
+			res = pstmt.executeQuery();
+			if(!res.next()) {
+				return 0;
+			}
+			id = res.getInt("id");
+			setForSeeker(
+			res.getString("firstName"),
+			res.getString("lastName"),
+			res.getString("password"),
+			res.getString("email"),
+			res.getString("phoneNumber"),
+			res.getString("address"),
+			res.getString("SeekStatus"),
+			res.getInt("hibernate")
+			);
+			return 1;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	public int getEmployerDetails(){
+		try {
+			String s = "Select * from employer where id=?";
+			pstmt = con.prepareStatement(s);
+			pstmt.setInt(1, id);
+			res = pstmt.executeQuery();
+			if(!res.next()) {
+				return 0;
+			}
+			id = res.getInt("id");
+			setForEmployer(
+			res.getString("firstName"),
+			res.getString("lastName"),
+			res.getString("password"),
+			res.getString("email"),
+			res.getString("phoneNumber"),
+			res.getString("address"),
+			res.getString("company"),
+			res.getInt("hibernate")
+			);
+			return 1;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	public HashMap<String,String> getEmployerHashMap(){
+		try {
+			String s = "Select * from employer where id=?";
+			pstmt = con.prepareStatement(s);
+			pstmt.setInt(1, id);
+			res = pstmt.executeQuery();
+			if(!res.next()) {
+				return null;
+			}
+			HashMap<String,String> result = new HashMap<>();
+			result.put("firstName", res.getString("firstName"));
+			result.put("lastName", res.getString("lastName"));
+			result.put("password", res.getString("password"));
+			result.put("email", res.getString("email"));
+			result.put("phoneNumber", res.getString("phoneNumber"));
+			result.put("address", res.getString("address"));
+			result.put("company", res.getString("company"));
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	ResultSet getEmployerResultSet(int newID){
+		try {
+			String s = "Select * from employer where id=?";
+			PreparedStatement newPstmt = con.prepareStatement(s);
+			newPstmt.setInt(1, newID);
+			ResultSet newRes = newPstmt.executeQuery();
+			if(!newRes.next()) {
+				return null;
+			}
+			return newRes;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	ResultSet getSeekerResultSet(String newID){
+		try {
+			String s = "Select * from seeker where id=?";
+			PreparedStatement newPstmt = con.prepareStatement(s);
+			newPstmt.setInt(1, Integer.valueOf(newID));
+			ResultSet newRes = newPstmt.executeQuery();
+			if(!newRes.next()) {
+				return null;
+			}
+			return newRes;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	void setForEmployer(String firstName,
+			String lastName,
+			String password,
+			String email,
+			String phoneNumber,
+			String address,
+			String company,
+			int hibernate) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.password = password;
+		this.email = email;
+		this.phoneNumber = phoneNumber;
+		this.address = address;
+		this.company = company;
+		this.hibernate = hibernate;
+	}
+	void setForSeeker(String firstName,
+			String lastName,
+			String password,
+			String email,
+			String phoneNumber,
+			String address,
+			String seekStatus,
+			int hibernate) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.password = password;
+		this.email = email;
+		this.phoneNumber = phoneNumber;
+		this.address = address;
+		this.seekStatus = seekStatus;
+		this.hibernate = hibernate;
+	}
 	public List<HashMap<String,String>> getJobListingForSeeker(){
 		List<HashMap<String,String>> result = new ArrayList<>();
 		
 		try {
-			String s = "Select * from jobsapplied where applicantEmail=?";
+			String s = "Select * from jobsapplied where SeekerID=?";
 			pstmt = con.prepareStatement(s);
-			pstmt.setString(1, email);
+			pstmt.setInt(1, id);
 			ResultSet res = pstmt.executeQuery();
 			HashSet<Integer> jobIDs = new HashSet<>();
 			while(res.next()) {
@@ -378,9 +544,23 @@ public class Model {
 
 			res = pstmt.executeQuery();
 			while(res.next()) {
+				int employerID = res.getInt("EmployerID");
+
+				ResultSet empRes = getEmployerResultSet(employerID);
+				
+				if(empRes.getInt("hibernate")==1) {
+					continue;
+				}
 				HashMap<String,String> oneSet = new HashMap<String,String>();
-				oneSet.put("company",res.getString("company"));
-				oneSet.put("EmployerEmail",res.getString("EmployerEmail"));
+				oneSet.put("EmployerID", String.valueOf(employerID));
+				
+				oneSet.put("empFirstName", empRes.getString("firstName"));
+				oneSet.put("empLastName", empRes.getString("lastName"));
+				
+				oneSet.put("name", empRes.getString("firstName")+" "+empRes.getString("lastName"));
+				
+				oneSet.put("company",empRes.getString("company"));
+				oneSet.put("EmployerEmail",empRes.getString("email"));
 				oneSet.put("role",res.getString("role"));
 				oneSet.put("description",res.getString("description"));
 				oneSet.put("salary",res.getString("salary"));
@@ -388,9 +568,11 @@ public class Model {
 				oneSet.put("datePosted",res.getString("datePosted"));
 				if(jobIDs.remove((Integer)res.getInt("id"))) {
 					oneSet.put("ButtonState", "disable");
+					oneSet.put("JobID",res.getString("id"));
 				}
 				else {
-					oneSet.put("ButtonState",res.getString("id"));
+					//oneSet.put("ButtonState",res.getString("enable"));
+					oneSet.put("JobID",res.getString("id"));
 				}
 				result.add(oneSet);
 			}
@@ -404,41 +586,54 @@ public class Model {
 		List<HashMap<String,String>> result = new ArrayList<>();
 		
 		try {
-			String s = "Select * from jobsapplied where applicantEmail=?";
+			String s = "Select * from jobsapplied where SeekerID=?";
 			pstmt = con.prepareStatement(s);
-			pstmt.setString(1, email);
-			ResultSet res = pstmt.executeQuery();
+			pstmt.setInt(1, id);
+			res = pstmt.executeQuery();
+			
 			while(res.next()) {
-				HashMap<String,String> oneSet = new HashMap<String,String>();
-				oneSet.put("jobID",res.getString("jobID"));
-				oneSet.put("posterEmail",res.getString("posterEmail"));
-				oneSet.put("role",res.getString("role"));
-				oneSet.put("datePosted",res.getString("datePosted"));
-				oneSet.put("dateApplied",res.getString("dateApplied"));
-				oneSet.put("status",res.getString("status"));
-				result.add(oneSet);
+				if(res.getInt("hibernate")==1 || res.getInt("seekerhib")==1) {
+					continue;
+				}
+				HashMap<String, String> eachJob = new HashMap<String, String>();
+				eachJob.put("EmployerID", res.getString("EmployerID"));
+				ResultSet empRes = getEmployerResultSet(Integer.valueOf(res.getString("EmployerID")));
+				eachJob.put("jobID", res.getString("jobID"));
+				eachJob.put("name", empRes.getString("firstName")+" "+empRes.getString("lastName"));
+				eachJob.put("company", empRes.getString("company"));
+				eachJob.put("role", res.getString("role"));
+				eachJob.put("datePosted", res.getDate("datePosted").toString());
+				eachJob.put("dateApplied", res.getDate("dateApplied").toString());
+				eachJob.put("status", res.getString("status"));
+
+				result.add(eachJob);
 			}
+			return result;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
+		
 		return result;
 	}
-	
 	public List<HashMap<String,String>> getJobListingForEmployer(){
 		List<HashMap<String,String>> result = new ArrayList<>();
 		
 		try {
-			String s = "Select * from jobsapplied where posterEmail=?";
+			String s = "Select * from jobsapplied where EmployerID=?";
 			pstmt = con.prepareStatement(s);
-			pstmt.setString(1, email);
+			pstmt.setInt(1, id);
 			res = pstmt.executeQuery();
 			
 			while(res.next()) {
+				if(res.getInt("seekerhib")==1) {
+					continue;
+				}
 				HashMap<String, String> eachJob = new HashMap<String, String>();
-				
+				ResultSet seekerRes = getSeekerResultSet(res.getString("SeekerID"));
 				eachJob.put("jobID", res.getString("jobID"));
-				eachJob.put("applicantEmail", res.getString("applicantEmail"));
+				eachJob.put("name", seekerRes.getString("firstName")+" "+seekerRes.getString("lastName"));
+				eachJob.put("SeekerID", res.getString("SeekerID"));
 				eachJob.put("role", res.getString("role"));
 				eachJob.put("datePosted", res.getDate("datePosted").toString());
 				eachJob.put("dateApplied", res.getDate("dateApplied").toString());
@@ -458,17 +653,15 @@ public class Model {
 		List<HashMap<String,String>> result = new ArrayList<>();
 		
 		try {
-			String s = "Select * from jobsposted where EmployerEmail=?";
+			String s = "Select * from jobsposted where EmployerID=?";
 			pstmt = con.prepareStatement(s);
-			pstmt.setString(1, email);
+			pstmt.setInt(1, id);
 			res = pstmt.executeQuery();
 			
 			while(res.next()) {
 				HashMap<String, String> eachJob = new HashMap<String, String>();
 				
 				eachJob.put("id", res.getString("id"));
-				eachJob.put("company", res.getString("company"));
-				eachJob.put("EmployerEmail", res.getString("EmployerEmail"));
 				eachJob.put("role", res.getString("role"));
 				eachJob.put("description", res.getString("description"));
 				eachJob.put("salary", res.getString("salary"));
@@ -562,10 +755,10 @@ public class Model {
 	}
 	public int updatePasswordForEmployer() {
 		try {
-			String s = "UPDATE employer SET password=? WHERE email=?";
+			String s = "UPDATE employer SET password=? WHERE id=?";
 			pstmt = con.prepareStatement(s);
 			pstmt.setString(1, passwordScrambler(password));
-			pstmt.setString(2, email);
+			pstmt.setInt(2, id);
 			
 			return pstmt.executeUpdate();
 		} catch (Exception e) {
@@ -574,17 +767,18 @@ public class Model {
 		return 0;
 	}
 	public int updateEmployer() {
-		String s = "UPDATE Employer SET firstName=?,lastName=?,phoneNumber=?,address=?,company=? WHERE id=?";
+		String s = "UPDATE Employer SET firstName=?,lastName=?,email=?,phoneNumber=?,address=?,company=? WHERE id=?";
 		
 		try {
 			pstmt = con.prepareStatement(s);
 			pstmt.setString(1, firstName);
 			pstmt.setString(2, lastName);
-			pstmt.setString(3, phoneNumber);
-			pstmt.setString(4, address);
-			pstmt.setString(5, company);
-			pstmt.setInt(6,id);
-			System.out.println("Model "+id);
+			pstmt.setString(3, email);
+			pstmt.setString(4, phoneNumber);
+			pstmt.setString(5, address);
+			pstmt.setString(6, company);
+			pstmt.setInt(7,id);
+
 
 			return pstmt.executeUpdate();
 		} catch (Exception e) {
@@ -594,17 +788,18 @@ public class Model {
 
 	}
 	public int updateSeeker() {
-		String s = "UPDATE Seeker SET firstName=?,lastName=?,phoneNumber=?,address=?,SeekStatus=? WHERE id=?";
+		String s = "UPDATE Seeker SET firstName=?,lastName=?,email=?,phoneNumber=?,address=?,SeekStatus=? WHERE id=?";
 		
 		try {
 			pstmt = con.prepareStatement(s);
 			pstmt.setString(1, firstName);
 			pstmt.setString(2, lastName);
-			pstmt.setString(3, phoneNumber);
-			pstmt.setString(4, address);
-			pstmt.setString(5, seekStatus);
-			pstmt.setInt(6,id);
-
+			pstmt.setString(3, email);
+			pstmt.setString(4, phoneNumber);
+			pstmt.setString(5, address);
+			pstmt.setString(6, seekStatus);
+			pstmt.setInt(7,id);
+			
 			return pstmt.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -614,10 +809,10 @@ public class Model {
 	}
 	public int updatePasswordForSeeker() {
 		try {
-			String s = "UPDATE seeker SET password=? WHERE email=?";
+			String s = "UPDATE seeker SET password=? WHERE id=?";
 			pstmt = con.prepareStatement(s);
 			pstmt.setString(1, passwordScrambler(password));
-			pstmt.setString(2, email);
+			pstmt.setInt(2, id);
 			
 			return pstmt.executeUpdate();
 		} catch (Exception e) {
@@ -627,9 +822,9 @@ public class Model {
 	}
 	public boolean checkPasswordOfEmployer() {
 		try {
-			String s = "Select * from employer where email=? and password=?";
+			String s = "Select * from employer where id=? and password=?";
 			pstmt = con.prepareStatement(s);
-			pstmt.setString(1, email);
+			pstmt.setInt(1, id);
 			pstmt.setString(2, passwordScrambler(password));
 			
 			return pstmt.executeQuery().next();
@@ -641,9 +836,9 @@ public class Model {
 	}
 	public boolean checkPasswordOfSeeker() {
 		try {
-			String s = "Select * from seeker where email=? and password=?";
+			String s = "Select * from seeker where id=? and password=?";
 			pstmt = con.prepareStatement(s);
-			pstmt.setString(1, email);
+			pstmt.setInt(1, id);
 			pstmt.setString(2, passwordScrambler(password));
 			
 			return pstmt.executeQuery().next();
@@ -663,14 +858,21 @@ public class Model {
 		return new String(result);
 	}
 	
-	String passwordDescrambler(String subject) {
-		char[] result = new char[subject.length()];
-		for(int i = 0;i<subject.length();++i) {
-			int newInt = (int)subject.charAt(i)-10;
-			result[i]=(char)newInt;
+	public boolean existingEmail(boolean isSeeker) {
+		String subject = isSeeker?"seeker":"employer";
+		String s = "Select * from "+subject+" where email=?";
+		try {
+			pstmt = con.prepareStatement(s);
+			pstmt.setString(1, email);
+			res = pstmt.executeQuery();
+			boolean result = res.next();
+			return result;
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
-		return new String(result);
+		return false;
 	}
+	
 	public String getFirstName() {
 		return firstName;
 	}
@@ -691,6 +893,9 @@ public class Model {
 	}
 	public String getPassword() {
 		return password;
+	}
+	public String getScrambledPassword() {
+		return passwordScrambler(password);
 	}
 	public void setPassword(String password) {
 		this.password = password;
@@ -801,12 +1006,23 @@ public class Model {
 	public void setId(int id) {
 		this.id = id;
 	}
-
+	public void setId(String id) {
+		this.id = Integer.valueOf(id);
+	}
+	
 	public String getOldEmail() {
 		return oldEmail;
 	}
 
 	public void setOldEmail(String oldEmail) {
 		this.oldEmail = oldEmail;
+	}
+
+	public int getHibernate() {
+		return hibernate;
+	}
+
+	public void setHibernate(int hibernate) {
+		this.hibernate = hibernate;
 	}
 }

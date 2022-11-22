@@ -39,16 +39,17 @@ public class SeekerChangePasswordFilter implements Filter {
 		Model m = new Model();
 		HttpServletRequest req = (HttpServletRequest)request;
 		HttpSession session = req.getSession();
-		m.setEmail(session.getAttribute("email").toString());
+		m.setId(session.getAttribute("id").toString());
 		m.setPassword(req.getParameter("oldPassword"));
 		
 		if(!m.checkPasswordOfSeeker()) {
-			session.setAttribute("mismatchPassword", "true");
-
 			HttpServletResponse resp = (HttpServletResponse)response;
-			resp.sendRedirect("SeekerChangePassword.jsp");
+			req.getSession().setAttribute("failedNotif", "Change password failed");
+
+			resp.sendRedirect("GetSeekerHomePage");
 			return;
 		}
+		req.getSession().setAttribute("successNotif", "Change password successful");
 		chain.doFilter(request, response);
 	}
 

@@ -21,11 +21,8 @@ public class AddJobsPosted extends HttpServlet {
 		String relevantExp = req.getParameter("RelevantExp");
 		
 		Model m = new Model();
+		m.setId(Integer.valueOf(req.getSession().getAttribute("id").toString()));
 		
-		HttpSession session = req.getSession(false);
-		
-		m.setCompany(session.getAttribute("company").toString());
-		m.setEmail(session.getAttribute("email").toString());
 		m.setRole(role);
 		m.setDescription(description);
 		m.setSalary(salary);
@@ -34,10 +31,10 @@ public class AddJobsPosted extends HttpServlet {
 		int result = m.addJobsPosted();
 		
 		if(result==1) {
-			resp.sendRedirect("/JobPortal/EmployerHomePage.jsp");
+			resp.sendRedirect("/JobPortal/EmployerJobPosting");
 		}
 		else {
-			resp.sendRedirect("/JobPortal/EmployerHomePage.jsp");
+			resp.sendRedirect("/JobPortal/PostAJob.html");
 		}
 	}
 

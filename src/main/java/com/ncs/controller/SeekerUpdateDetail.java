@@ -23,32 +23,34 @@ public class SeekerUpdateDetail extends HttpServlet {
 		String phoneNumber = req.getParameter("phoneNumber");
 		String address = req.getParameter("address");
 		String seekStatus = req.getParameter("SeekStatus");
-		
+		String password = req.getParameter("password");
+
 		Model m = new Model();
 		
-		if(!email.equals(session.getAttribute("email"))) {
-			System.out.println("conditional");
-			m.setOldEmail(session.getAttribute("email").toString());
-			m.setEmail(email);
-			m.updateSeekerEmail();
-			session.setAttribute("email",m.getEmail());
-		}
+
 		m.setId(Integer.parseInt(session.getAttribute("id").toString()));
+		m.setPassword(password);
+
+		m.setEmail(email);
 		m.setFirstName(firstName);
 		m.setLastName(lastName);
 		m.setPhoneNumber(phoneNumber);
 		m.setAddress(address);
 		m.setSeekStatus(seekStatus);
 		
-		m.updateSeeker();
+		if(m.updateSeeker()==0){
+			return;
+		}
 		
-		session.setAttribute("firstName", m.getFirstName());
-		session.setAttribute("lastName", m.getLastName());
-		session.setAttribute("phoneNumber", m.getPhoneNumber());
-		session.setAttribute("address", m.getAddress());
-		session.setAttribute("SeekStatus", m.getSeekStatus());
+		req.setAttribute("id", m.getId());
+		req.setAttribute("firstName", m.getFirstName());
+		req.setAttribute("lastName", m.getLastName());
+		req.setAttribute("email", m.getEmail());
+		req.setAttribute("phoneNumber", m.getPhoneNumber());
+		req.setAttribute("address", m.getAddress());
+		req.setAttribute("SeekStatus", m.getSeekStatus());
 		
-		resp.sendRedirect("/JobPortal/SeekerHomePage.jsp");
+		resp.sendRedirect("GetSeekerHomePage");
 	}
 
 }

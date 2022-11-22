@@ -4,27 +4,6 @@
 	<filter>
 		<description>
 		</description>
-		<display-name>AddEmployerFilter</display-name>
-		<filter-name>AddEmployerFilter</filter-name>
-		<filter-class>com.ncs.controller.AddEmployerFilter</filter-class>
-	</filter>
-	<filter>
-		<description>
-		</description>
-		<display-name>LoginFilter</display-name>
-		<filter-name>LoginFilter</filter-name>
-		<filter-class>com.ncs.controller.LoginFilter</filter-class>
-	</filter>
-	<filter>
-		<description>
-		</description>
-		<display-name>AddSeekerFilter</display-name>
-		<filter-name>AddSeekerFilter</filter-name>
-		<filter-class>com.ncs.controller.AddSeekerFilter</filter-class>
-	</filter>
-	<filter>
-		<description>
-		</description>
 		<display-name>EmployerChangePasswordFilter</display-name>
 		<filter-name>EmployerChangePasswordFilter</filter-name>
 		<filter-class>com.ncs.controller.EmployerChangePasswordFilter</filter-class>
@@ -41,7 +20,7 @@
 		</description>
 		<display-name>EmployerUpdateDetailFilter</display-name>
 		<filter-name>EmployerUpdateDetailFilter</filter-name>
-		<filter-class>com.ncs.controller.EmployerUpdateDetailFilter</filter-class>
+		<filter-class>com.ncs.filter.EmployerUpdateDetailFilter</filter-class>
 	</filter>
 	<filter>
 		<description>
@@ -50,30 +29,20 @@
 		<filter-name>SeekerUpdateDetailFilter</filter-name>
 		<filter-class>com.ncs.controller.SeekerUpdateDetailFilter</filter-class>
 	</filter>
-	<filter-mapping>
-		<filter-name>AddEmployerFilter</filter-name>
-		<url-pattern>/AddEmployerFilter</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>AddEmployerFilter</filter-name>
-		<servlet-name>AddEmployer</servlet-name>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>LoginFilter</filter-name>
-		<url-pattern>/LoginFilter</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>LoginFilter</filter-name>
-		<servlet-name>Login</servlet-name>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>AddSeekerFilter</filter-name>
-		<url-pattern>/AddSeekerFilter</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>AddSeekerFilter</filter-name>
-		<servlet-name>AddSeeker</servlet-name>
-	</filter-mapping>
+	<filter>
+		<description>
+		</description>
+		<display-name>CheckPasswordForEmployer</display-name>
+		<filter-name>CheckPasswordForEmployer</filter-name>
+		<filter-class>com.ncs.filter.CheckPasswordForEmployer</filter-class>
+	</filter>
+	<filter>
+		<description>
+		</description>
+		<display-name>CheckPasswordForSeeker</display-name>
+		<filter-name>CheckPasswordForSeeker</filter-name>
+		<filter-class>com.ncs.filter.CheckPasswordForSeeker</filter-class>
+	</filter>
 	<filter-mapping>
 		<filter-name>EmployerChangePasswordFilter</filter-name>
 		<url-pattern>/EmployerChangePasswordFilter</url-pattern>
@@ -105,6 +74,34 @@
 	<filter-mapping>
 		<filter-name>SeekerUpdateDetailFilter</filter-name>
 		<servlet-name>SeekerUpdateDetail</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CheckPasswordForEmployer</filter-name>
+		<url-pattern>/CheckPasswordForEmployer</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CheckPasswordForEmployer</filter-name>
+		<servlet-name>DeleteEmployer</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CheckPasswordForEmployer</filter-name>
+		<servlet-name>HibernateEmployer</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CheckPasswordForSeeker</filter-name>
+		<url-pattern>/CheckPasswordForSeeker</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CheckPasswordForSeeker</filter-name>
+		<servlet-name>HibernateSeeker</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CheckPasswordForSeeker</filter-name>
+		<servlet-name>SeekerUnhibernate</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CheckPasswordForSeeker</filter-name>
+		<servlet-name>DeleteSeeker</servlet-name>
 	</filter-mapping>
 	<servlet>
 		<description>
@@ -232,6 +229,62 @@
 		<servlet-name>SeekerUpdateDetail</servlet-name>
 		<servlet-class>com.ncs.controller.SeekerUpdateDetail</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>CheckingForEmail</display-name>
+		<servlet-name>CheckingForEmail</servlet-name>
+		<servlet-class>com.ncs.controller.CheckingForEmail</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>GetSeekerHomePage</display-name>
+		<servlet-name>GetSeekerHomePage</servlet-name>
+		<servlet-class>com.ncs.controller.GetSeekerHomePage</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>GetEmployerHomePage</display-name>
+		<servlet-name>GetEmployerHomePage</servlet-name>
+		<servlet-class>com.ncs.controller.GetEmployerHomePage</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>HibernateEmployer</display-name>
+		<servlet-name>HibernateEmployer</servlet-name>
+		<servlet-class>com.ncs.controller.HibernateEmployer</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>HibernateSeeker</display-name>
+		<servlet-name>HibernateSeeker</servlet-name>
+		<servlet-class>com.ncs.controller.HibernateSeeker</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>EmployerUnhibernate</display-name>
+		<servlet-name>EmployerUnhibernate</servlet-name>
+		<servlet-class>com.ncs.controller.EmployerUnhibernate</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>SeekerUnhibernate</display-name>
+		<servlet-name>SeekerUnhibernate</servlet-name>
+		<servlet-class>com.ncs.controller.SeekerUnhibernate</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>DeleteJobsApplied</display-name>
+		<servlet-name>DeleteJobsApplied</servlet-name>
+		<servlet-class>com.ncs.controller.DeleteJobsApplied</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>AddEmployer</servlet-name>
 		<url-pattern>/AddEmployer</url-pattern>
@@ -303,6 +356,38 @@
 	<servlet-mapping>
 		<servlet-name>SeekerUpdateDetail</servlet-name>
 		<url-pattern>/SeekerUpdateDetail</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>CheckingForEmail</servlet-name>
+		<url-pattern>/CheckingForEmail</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GetSeekerHomePage</servlet-name>
+		<url-pattern>/GetSeekerHomePage</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GetEmployerHomePage</servlet-name>
+		<url-pattern>/GetEmployerHomePage</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>HibernateEmployer</servlet-name>
+		<url-pattern>/HibernateEmployer</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>HibernateSeeker</servlet-name>
+		<url-pattern>/HibernateSeeker</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>EmployerUnhibernate</servlet-name>
+		<url-pattern>/EmployerUnhibernate</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>SeekerUnhibernate</servlet-name>
+		<url-pattern>/SeekerUnhibernate</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DeleteJobsApplied</servlet-name>
+		<url-pattern>/DeleteJobsApplied</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

@@ -25,30 +25,25 @@ public class EmployerUpdateDetail extends HttpServlet {
 		String company = req.getParameter("company");
 		
 		Model m = new Model();
-		
-		System.out.println(email+ " "+session.getAttribute("email"));
-		if(!email.equals(session.getAttribute("email"))) {
-			System.out.println("conditional");
-			m.setOldEmail(session.getAttribute("email").toString());
-			m.setEmail(email);
-			m.updateEmployerEmail();
-			session.setAttribute("email",m.getEmail());
-		}
 		m.setId(Integer.parseInt(session.getAttribute("id").toString()));
+		
+		m.setEmail(email);
 		m.setFirstName(firstName);
 		m.setLastName(lastName);
 		m.setPhoneNumber(phoneNumber);
 		m.setAddress(address);
 		m.setCompany(company);
-		
+
 		m.updateEmployer();
+
+		req.setAttribute("id", m.getId());
+		req.setAttribute("firstName", m.getFirstName());
+		req.setAttribute("lastName", m.getLastName());
+		req.setAttribute("email", m.getEmail());
+		req.setAttribute("phoneNumber", m.getPhoneNumber());
+		req.setAttribute("address", m.getAddress());
+		req.setAttribute("company", m.getCompany());
 		
-		session.setAttribute("firstName", m.getFirstName());
-		session.setAttribute("lastName", m.getLastName());
-		session.setAttribute("phoneNumber", m.getPhoneNumber());
-		session.setAttribute("address", m.getAddress());
-		session.setAttribute("company", m.getCompany());
-		
-		resp.sendRedirect("/JobPortal/EmployerHomePage.jsp");
+		resp.sendRedirect("GetEmployerHomePage");
 	}
 }

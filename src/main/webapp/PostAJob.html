@@ -7,35 +7,60 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="CSS/NavBar.css">
+<link rel="stylesheet" href="CSS/PostAJob.css">
+<link rel="stylesheet" href="CSS/Footer.css">
 </head>
 <body>
     <div id="stickyBar">
         <ul id="navbar">
-            <li><a href="EmployerHomePage.jsp">Home</a></li>
+            <li><a href="GetEmployerHomePage">Home</a></li>
             <li class="active"><a href="PostAJob.html">Post a Job</a></li>
             <li><a href="EmployerJobList">Applicants</a></li>
             <li><a href="EmployerJobPosting">Job Posting</a></li>
+            <li class="RightFloat"><a  href="Logout">Log Out</a></li>
          </ul>
-    </div>
-<div id="NotepaperDiv">
+   </div>
+<div id="FormContainer">
 <form action="/JobPortal/AddJobsPosted">
 	<label for="role">Role</label><br>
 	<input name="role" type="text" required><br>
 
 	<label for="description">description</label><br>
-	<input name="description" type="text" required><br>
+	<textarea name="description" rows="4" cols="50" required></textarea><br>
 
     <label for="salary">salary</label><br>
     <input name="salary" type="text" required><br>
     
     <label for="RelevantExp">Relevant Experience</label><br>
-    <input name="RelevantExp" type="text" required><br>
+    <textarea name="RelevantExp" rows="4" cols="50" required></textarea><br>
     
-    <button type="submit" value="Login">Post</button>
+    <input id="submitButton" type="submit" value="Post">
     
 </form>
 </div>
 
 </body>
+<footer>
+	<div>
+		<h4>Seeker</h4>
+			<a href="RegisterAsSeeker.jsp">Seeker Register</a>
+			<a href="SeekerLogin.jsp">Seeker Log In</a>
+	</div>
+	<div>
+		<h4>Employer</h4>
+			<a href="RegisterAsEmployer.jsp">Employer Register</a>
+			<a href="EmployerLogin.jsp">Employer Log In</a>
+	
+	</div>
+	<div>
+		<h4>Legal</h4>
+		<a>Terms and Condition</a>
+	</div>
+	<div>
+		<h4>About Us</h4>
+		<a>About the developer</a>
+	</div>
+</footer>
+
 </html>

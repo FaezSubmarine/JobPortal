@@ -43,7 +43,10 @@ public class AddEmployer extends HttpServlet {
 			session.setAttribute("address", address);
 			session.setAttribute("company", company);
 			
-			resp.sendRedirect("/JobPortal/EmployerHomePage.jsp");
+			//resp.sendRedirect("/JobPortal/EmployerHomePage.jsp");
+			resp.sendRedirect("GetEmployerHomePage");
+			//TODO:set up a request get query string
+			//resp.sendRedirect("/JobPortal/EmployerHomePage.jsp?id="+m.getId());
 		}
 		else {
 			resp.sendRedirect("/JobPortal/index.jsp");

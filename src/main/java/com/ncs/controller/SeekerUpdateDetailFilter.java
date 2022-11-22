@@ -46,24 +46,16 @@ public class SeekerUpdateDetailFilter implements Filter {
 		int id =Integer.parseInt(session.getAttribute("id").toString());
 		System.out.println("update "+id);
 		m.setId(id);
-		m.setEmail(request.getParameter("email"));
+		m.getSeekerDetails();
+		m.setEmail(m.getEmail());
 		m.setPassword(req.getParameter("password"));
-		if(m.loginSeeker()==0) {
-			session.setAttribute("mismatchPassword", "true");
-			resp.sendRedirect("SeekerUpdateDetail.jsp");
+		if(m.loginSeeker()!=1) {
+			req.getSession().setAttribute("failedNotif", "Update detail failed");
+
+			resp.sendRedirect("GetSeekerHomePage");
 			return;
 		}
-		
-		if(!request.getParameter("email").equals(session.getAttribute("email"))) {
-			m.setId(Integer.parseInt(session.getAttribute("id").toString()));
-			
-			if(m.checkExistingEmailForSeekerWithDiffID()) {
-				session.setAttribute("ExistingEmail", "true");
-				
-				resp.sendRedirect("SeekerUpdateDetail.jsp");
-				return;
-			}
-		}
+		req.getSession().setAttribute("successNotif", "Update detail successful");
 		chain.doFilter(request, response);
 	}
 

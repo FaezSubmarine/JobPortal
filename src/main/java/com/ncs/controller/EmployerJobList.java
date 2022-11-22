@@ -11,10 +11,15 @@ import com.ncs.model.Model;
 
 public class EmployerJobList extends HttpServlet {
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session= request.getSession(false);
+		if(session==null) {
+			response.sendRedirect("index.jsp");
+		}
+		
+		
 		Model m = new Model();
 		
-		HttpSession session= request.getSession();
-		m.setEmail(session.getAttribute("email").toString());
+		m.setId(session.getAttribute("id").toString());
 		session.setAttribute("JobList", m.getJobListingForEmployer());
 		
 		response.sendRedirect("JobsAppliedList.jsp");

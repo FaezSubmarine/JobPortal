@@ -16,48 +16,53 @@ import com.ncs.model.Model;
 public class Login extends HttpServlet {
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		Boolean isSeeker = req.getParameter("IsSeeker") !=null;
+		System.out.println("IsSeeker "+isSeeker.toString());
 		String email = req.getParameter("email");
 		String password = req.getParameter("password");
-		Boolean employerChecked = req.getParameter("UserType").equals("Employer");
 		
 		Model m = new Model();
 		m.setEmail(email);
 		m.setPassword(password);
+		System.out.println(m.getEmail()+" "+m.getScrambledPassword());
 		
-		if(employerChecked) {
+		if(!isSeeker) {
 			int result = m.loginEmployer();
 			if(result ==1) {
+				if(req.getSession()!=null)
+					req.getSession().invalidate();
+				
 				HttpSession session = req.getSession(true);
 				session.setAttribute("id", m.getId());
-				session.setAttribute("firstName", m.getFirstName());
-				session.setAttribute("lastName", m.getLastName());
-				session.setAttribute("password", m.getPassword());
 				session.setAttribute("email", m.getEmail());
-				session.setAttribute("phoneNumber", m.getPhoneNumber());
-				session.setAttribute("address", m.getAddress());
-				session.setAttribute("company", m.getCompany());
-				resp.sendRedirect("/JobPortal/EmployerHomePage.jsp");
+				session.setAttribute("isSeeker", false);
+				resp.sendRedirect("/JobPortal/GetEmployerHomePage");
 			}
 			else {
-				resp.sendRedirect("/JobPortal/index.jsp");
+				HttpSession session = req.getSession(true);
+				session.setAttribute("NoPassword", true);
+				resp.sendRedirect("/JobPortal/EmployerLogin.jsp");
 			}
 		}
 		else {
 			int result = m.loginSeeker();
 			if(result ==1) {
+				if(req.getSession()!=null)
+					req.getSession().invalidate();
+				
 				HttpSession session = req.getSession(true);
+
 				session.setAttribute("id", m.getId());
-				session.setAttribute("firstName", m.getFirstName());
-				session.setAttribute("lastName", m.getLastName());
-				session.setAttribute("password", m.getPassword());
 				session.setAttribute("email", m.getEmail());
-				session.setAttribute("phoneNumber", m.getPhoneNumber());
-				session.setAttribute("address", m.getAddress());
-				session.setAttribute("SeekStatus", m.getSeekStatus());
-				resp.sendRedirect("/JobPortal/SeekerHomePage.jsp");
+				session.setAttribute("isSeeker", true);
+
+				resp.sendRedirect("/JobPortal/GetSeekerHomePage");
 			}
 			else {
-				resp.sendRedirect("/JobPortal/index.jsp");
+				HttpSession session = req.getSession(true);
+
+				session.setAttribute("NoPassword", true);
+				resp.sendRedirect("/JobPortal/SeekerLogin.jsp");
 			}
 		}
 	}

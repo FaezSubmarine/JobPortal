@@ -18,7 +18,7 @@ public class SeekerJobList extends HttpServlet {
 		Model m = new Model();
 		
 		HttpSession session= req.getSession();
-		m.setEmail(session.getAttribute("email").toString());
+		m.setId(session.getAttribute("id").toString());
 		session.setAttribute("JobList", m.getJobListingForSeeker());
 		
 		resp.sendRedirect("ApplyToAJob.jsp");

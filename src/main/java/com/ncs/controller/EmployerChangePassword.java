@@ -18,12 +18,12 @@ public class EmployerChangePassword extends HttpServlet {
 		Model m = new Model();
 		HttpSession session = req.getSession();
 		
-		session.removeAttribute("mismatchPassword");
+		/* session.removeAttribute("mismatchPassword"); */
 		m.setPassword(req.getParameter("password"));
-		m.setEmail(session.getAttribute("email").toString());
+		m.setId(session.getAttribute("id").toString());
 		m.updatePasswordForEmployer();
 		
-		resp.sendRedirect("EmployerHomePage.jsp");
+		resp.sendRedirect("GetEmployerHomePage");
 	}
 
 }

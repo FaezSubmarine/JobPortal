@@ -12,10 +12,14 @@ import com.ncs.model.Model;
 public class DeleteJobPosting extends HttpServlet {
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String getQuery = req.getQueryString();
+		int id =-1;
+		if(getQuery !=null) {
+			id = Integer.valueOf(getQuery.substring(3));
+		}
 		Model m = new Model();
-		HttpSession session = req.getSession();
 		
-		m.setId(Integer.parseInt(req.getParameter("jobID")));
+		m.setId(id);
 		m.deleteJobPosting();
 		
 		resp.sendRedirect("EmployerJobPosting");
